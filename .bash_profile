@@ -78,11 +78,4 @@ docker-enter() {
   boot2docker ssh -t sudo /var/lib/boot2docker/docker-enter "$@"
 }
 
-##
-# Your previous /Users/mike/.profile file was backed up as /Users/mike/.profile.macports-saved_2015-10-15_at_23:47:22
-##
-
-# MacPorts Installer addition on 2015-10-15_at_23:47:22: adding an appropriate PATH variable for use with MacPorts.
-export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
-# Finished adapting your PATH environment variable for use with MacPorts.
 
