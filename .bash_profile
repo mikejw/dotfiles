@@ -19,6 +19,27 @@ alias mvnstuff="mvn tomcat:redeploy"
 # mongo
 export PATH="~/softwares/mongodb-osx-x86_64-2.6.5/bin:$PATH"
 
+
+# mongodb
+# taken from: https://github.com/codeforamerica/ohana-api/wiki/Installing-MongoDB-with-MacPorts-on-OS-X
+
+alias mongostart="sudo mongod -f /opt/local/etc/mongodb/mongod.conf --httpinterface"
+
+mongostop_func () {
+  local mongopid=`less /opt/local/var/db/mongodb_data/mongod.lock`;
+  if [[ $mongopid =~ [[:digit:]] ]]; then
+      sudo kill -15 $mongopid;
+      echo mongod process $mongopid terminated;
+  else
+      echo mongo process $mongopid not exist;
+  fi
+}
+
+alias mongostop="mongostop_func"
+
+
+
+
 # elasticsearch
 export PATH="~/softwares/elasticsearch-1.4.0/bin:$PATH"
 
@@ -57,11 +78,4 @@ docker-enter() {
   boot2docker ssh -t sudo /var/lib/boot2docker/docker-enter "$@"
 }
 
-##
-# Your previous /Users/mike/.profile file was backed up as /Users/mike/.profile.macports-saved_2015-10-15_at_23:47:22
-##
-
-# MacPorts Installer addition on 2015-10-15_at_23:47:22: adding an appropriate PATH variable for use with MacPorts.
-export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
-# Finished adapting your PATH environment variable for use with MacPorts.
 
