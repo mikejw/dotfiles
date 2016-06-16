@@ -1,0 +1,6 @@
+
+
+- make back up of utility scripts in /root
+- make back up of /var/git (synced to S3)
+- create new VM
+
