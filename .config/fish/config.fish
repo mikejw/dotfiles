@@ -2,14 +2,18 @@
 function motd
     echo -n "
   _.........._
+ | |@mikejw | |
  | |dotfiles| |
- | |        | |
  | |        | |
  | |________| |
  |   ______   |
  |  |    | |  |
  |__|____|_|__|
 "
+end
+
+function exit_nix
+    kill -9 $NIX_PID
 end
 
 function start_tmux
