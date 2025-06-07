@@ -1,9 +1,11 @@
 
-/bin
+/bin/**
 !/bin/.gitkeep
 
-/.config
+/.config/**
+!/.config/fish
 !/.config/fish/config.fish
+
 
 /.idea
 
