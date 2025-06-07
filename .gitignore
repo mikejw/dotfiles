@@ -1,0 +1,10 @@
+
+/bin
+!/bin/.gitkeep
+
+/.config
+!/.config/fish/config.fish
+
+/.idea
+
+*~
