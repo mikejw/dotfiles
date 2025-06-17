@@ -13,6 +13,7 @@ pkgs.mkShell {
     curl
     docker
     docker-compose
+    packer
   ];
 
   shellHook = ''
