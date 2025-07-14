@@ -14,6 +14,7 @@ pkgs.mkShell {
     docker
     docker-compose
     packer
+    go
   ];
 
   shellHook = ''
