@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# golang
+export TZ=Europe/London
 
 # ansible
 export LANGUAGE="C.UTF-8"
@@ -14,5 +16,3 @@ export LC_ALL="C.UTF-8"
 
 
 XDG_CONFIG_HOME=./.config $(which fish)
-
-
