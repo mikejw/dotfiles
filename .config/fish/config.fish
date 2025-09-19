@@ -52,6 +52,18 @@ function cpanm
     perl (which cpanm) $argv
 end
 
+function packer --wraps packer --description "Packer with absolute PACKER_TMP_DIR"
+    # project root: git top-level if available, else CWD
+    set -l root (command git rev-parse --show-toplevel ^/dev/null 2>/dev/null); or set -l root $PWD
+    set -l tmp "$root/.config/packer/tmp"
+    mkdir -p $tmp
+
+    # Make them absolute for this invocation
+    env PACKER_TMP_DIR="$tmp" TMPDIR="$tmp" packer $argv
+end
+
+
+
 function start
     fish_config theme choose "Base16 Eighties"
     motd
