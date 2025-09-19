@@ -35,6 +35,7 @@ pkgs.mkShell {
     go
     php
     wget
+    packer
   ];
 
   shellHook = ''
