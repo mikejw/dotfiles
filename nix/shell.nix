@@ -6,6 +6,11 @@ pkgs.mkShell {
     perl
     perlPackages.locallib
     perlPackages.Appcpanminus
+    perlPackages.LWPProtocolHttps
+    perlPackages.IOSocketSSL
+    perlPackages.MozillaCA
+    cacert
+
 
     # Native deps for XML::Parser
     expat
