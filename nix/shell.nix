@@ -26,7 +26,7 @@ pkgs.mkShell {
     tmux
     fishPlugins.nvm
     virtualenv
-    git
+    gitFull
     ansible
     curl
     docker
