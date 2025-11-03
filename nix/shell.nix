@@ -11,6 +11,7 @@ pkgs.mkShell {
     perlPackages.MozillaCA
     cacert
 
+    caddy
 
     # Native deps for XML::Parser
     expat
