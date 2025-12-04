@@ -32,7 +32,6 @@ pkgs.mkShell {
     curl
     docker
     docker-compose
-    packer
     go
     php
     wget
