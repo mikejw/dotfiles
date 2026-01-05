@@ -69,7 +69,7 @@ function start
     motd
     nvm use 22.16.0 > /dev/null 2>&1
     fish_add_path ./bin
-    fish_add_path ~/.config/composer/vendor/bin
+    fish_add_path ~/.composer/vendor/bin
     go-env
     ansible-env
     perl-env
