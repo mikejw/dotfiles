@@ -13,6 +13,8 @@ pkgs.mkShell {
 
     caddy
 
+    mariadb
+
     # Native deps for XML::Parser
     expat
     pkg-config
