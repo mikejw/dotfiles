@@ -35,9 +35,14 @@ pkgs.mkShell {
     docker
     docker-compose
     go
-    php
     wget
     packer
+
+    imagemagick
+    (php.withExtensions ({ enabled, all }: enabled ++ [
+      all.xdebug
+      all.imagick
+    ]))
   ];
 
   shellHook = ''
