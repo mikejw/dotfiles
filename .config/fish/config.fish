@@ -63,6 +63,12 @@ function packer --wraps packer --description "Packer with absolute PACKER_TMP_DI
 end
 
 
+function homebrew
+    if test -x /opt/homebrew/bin/brew
+        eval "$(/opt/homebrew/bin/brew shellenv fish)"
+    end
+end
+
 
 function start
     fish_config theme choose "Base16 Eighties"
@@ -73,6 +79,7 @@ function start
     go-env
     ansible-env
     perl-env
+    homebrew
 end
 
 if status is-interactive
