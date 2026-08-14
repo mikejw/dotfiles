@@ -42,6 +42,7 @@ pkgs.mkShell {
     (php.withExtensions ({ enabled, all }: enabled ++ [
       all.xdebug
       all.imagick
+      all.mailparse
     ]))
   ];
 
