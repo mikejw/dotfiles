@@ -1,7 +1,15 @@
-{ pkgs ? import <nixpkgs> {} }:
-  
+{ pkgs ? import <nixpkgs> {
+    overlays = [
+      (import (builtins.fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz"))
+    ];
+  }
+}:
+
+let
+  rustToolchain = pkgs.rust-bin.stable."1.91.0".default;
+in
+
 pkgs.mkShell {
-  # nativeBuildInputs is usually what you want -- tools you need to run
   nativeBuildInputs = with pkgs; [
     perl
     perlPackages.locallib
@@ -12,7 +20,6 @@ pkgs.mkShell {
     cacert
 
     caddy
-
     mariadb
 
     # Native deps for XML::Parser
@@ -37,8 +44,12 @@ pkgs.mkShell {
     go
     wget
     packer
-
     imagemagick
+
+    libusb1
+    rustToolchain
+    solana-cli
+
     (php.withExtensions ({ enabled, all }: enabled ++ [
       all.xdebug
       all.imagick
@@ -50,6 +61,7 @@ pkgs.mkShell {
     if [ -z "$TMUX" ]; then
       SESSION_NAME=default
       FISH=$(command -v fish)
+
       # Get the absolute path to the repo root (where .config lives)
       # Try git first, then fall back to resolving from current directory
       REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || realpath . 2>/dev/null || pwd)"
@@ -61,5 +73,5 @@ pkgs.mkShell {
         exec tmux new-session -s "$SESSION_NAME" "XDG_CONFIG_HOME=\"$CONFIG_HOME\" exec $FISH"
       fi
     fi
-'';
+  '';
 }

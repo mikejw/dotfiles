@@ -1,6 +1,7 @@
 
 /bin/**
 !/bin/.gitkeep
+!/bin/install-spl-token.sh
 
 /.config/**
 !/.config/fish
@@ -17,3 +18,5 @@
 *~
 
 /.perl5
+
+/.cargo

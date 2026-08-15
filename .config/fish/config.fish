@@ -77,6 +77,7 @@ function start
     fish_add_path ./bin
     fish_add_path ~/.composer/vendor/bin
     fish_add_path .config/composer/vendor/bin
+    fish_add_path .cargo/bin
     go-env
     ansible-env
     perl-env
