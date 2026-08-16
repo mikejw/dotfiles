@@ -1,4 +1,8 @@
 
+mkdir -p .avm
+set -gx ANCHOR_VERSION "1.0.0"
+set -gx AVM_HOME (realpath .avm)
+
 function motd
     echo -n "
   _.........._
@@ -69,19 +73,31 @@ function homebrew
     end
 end
 
+function anchor-env
+    if command -q avm
+        avm use $ANCHOR_VERSION >/dev/null
+    end
+end
 
 function start
     fish_config theme choose "Base16 Eighties"
     motd
     nvm use 22.16.0 > /dev/null 2>&1
+
     fish_add_path ./bin
     fish_add_path ~/.composer/vendor/bin
     fish_add_path .config/composer/vendor/bin
     fish_add_path .cargo/bin
+
+    fish_add_path "$AVM_HOME/bin"
+    
+    fish_add_path .solana/bin
+
     go-env
     ansible-env
     perl-env
     homebrew
+    anchor-env
 end
 
 if status is-interactive

@@ -48,7 +48,6 @@ pkgs.mkShell {
 
     libusb1
     rustToolchain
-    solana-cli
 
     (php.withExtensions ({ enabled, all }: enabled ++ [
       all.xdebug

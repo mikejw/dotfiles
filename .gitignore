@@ -1,7 +1,9 @@
-
+ 
 /bin/**
 !/bin/.gitkeep
 !/bin/install-spl-token.sh
+!/bin/install-anchor.sh
+!/bin/install-solana.sh
 
 /.config/**
 !/.config/fish
@@ -20,3 +22,6 @@
 /.perl5
 
 /.cargo
+/.avm
+/.solana
+

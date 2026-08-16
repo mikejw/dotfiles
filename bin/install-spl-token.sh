@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Deprecated - spl-token now installs through `install-solana.sh`.
+
 set -euo pipefail
 
 SPL_TOKEN_VERSION="5.6.1"
