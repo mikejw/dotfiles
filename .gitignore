@@ -4,6 +4,11 @@
 !/bin/install-spl-token.sh
 !/bin/install-anchor.sh
 !/bin/install-solana.sh
+!/bin/install-rustup.sh
+!/bin/cargo
+!/bin/rustc
+
+
 
 /.config/**
 !/.config/fish
@@ -24,4 +29,8 @@
 /.cargo
 /.avm
 /.solana
+/.rustup
+/.rustup-cargo
+/.surfpool
+
 

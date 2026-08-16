@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+bin_dir="${repo_root}/bin"
+rustup_rustc="${repo_root}/.rustup-cargo/bin/rustc"
+
+#
+# If rustup selected a toolchain for this process, let its rustc
+# proxy dispatch to that toolchain.
+#
+if [[ -n "${RUSTUP_TOOLCHAIN:-}" ]]; then
+    exec "${rustup_rustc}" "$@"
+fi
+
+#
+# Otherwise use the underlying Nix rustc while preserving PATH.
+#
+IFS=':' read -ra path_entries <<< "${PATH}"
+
+for dir in "${path_entries[@]}"; do
+    [[ "${dir}" == "${bin_dir}" ]] && continue
+
+    if [[ -x "${dir}/rustc" ]]; then
+        exec "${dir}/rustc" "$@"
+    fi
+done
+
+echo "Unable to locate underlying rustc executable" >&2
+exit 1

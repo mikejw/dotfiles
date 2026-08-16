@@ -1,7 +1,11 @@
 
 mkdir -p .avm
+
 set -gx ANCHOR_VERSION "1.0.0"
 set -gx AVM_HOME (realpath .avm)
+set -gx RUSTUP_HOME (realpath .rustup)
+set -gx RUSTUP_CARGO_HOME (realpath .rustup-cargo)
+
 
 function motd
     echo -n "
@@ -48,6 +52,12 @@ function perl-env --description 'Set up local::lib for Perl'
     end
 end
 
+function anchor-env
+    if command -q avm
+        avm use $ANCHOR_VERSION >/dev/null
+    end
+end
+
 # cpanm shebang fix
 function cpanm
     if set -q shell
@@ -73,25 +83,20 @@ function homebrew
     end
 end
 
-function anchor-env
-    if command -q avm
-        avm use $ANCHOR_VERSION >/dev/null
-    end
-end
-
 function start
     fish_config theme choose "Base16 Eighties"
     motd
     nvm use 22.16.0 > /dev/null 2>&1
 
-    fish_add_path ./bin
+    fish_add_path (realpath ./bin)
+
     fish_add_path ~/.composer/vendor/bin
     fish_add_path .config/composer/vendor/bin
-    fish_add_path .cargo/bin
 
+    fish_add_path .cargo/bin
     fish_add_path "$AVM_HOME/bin"
-    
     fish_add_path .solana/bin
+    fish_add_path .surfpool/bin
 
     go-env
     ansible-env
@@ -106,3 +111,4 @@ if status is-interactive
         start
     end
 end
+export PATH="/Users/mearp/.local/bin:$PATH"

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+bin_dir="${repo_root}/bin"
+rustup_cargo="${repo_root}/.rustup-cargo/bin/cargo"
+
+#
+# cargo +toolchain ...
+#
+# Solana's cargo-build-sbf uses this syntax, which must go
+# through rustup's cargo proxy.
+#
+if [[ "${1:-}" == +* ]]; then
+    exec "${rustup_cargo}" "$@"
+fi
+
+#
+# Find the real Cargo after our wrapper in PATH, but DO NOT
+# modify PATH for the child process. cargo-build-sbf still
+# needs to find repo-local rustup later.
+#
+IFS=':' read -ra path_entries <<< "${PATH}"
+
+for dir in "${path_entries[@]}"; do
+    [[ "${dir}" == "${bin_dir}" ]] && continue
+
+    if [[ -x "${dir}/cargo" ]]; then
+        exec "${dir}/cargo" "$@"
+    fi
+done
+
+echo "Unable to locate underlying cargo executable" >&2
+exit 1
