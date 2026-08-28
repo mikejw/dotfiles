@@ -1,5 +1,7 @@
 
 mkdir -p .avm
+mkdir -p .rustup
+mkdir -p .rustup-cargo
 
 set -gx ANCHOR_VERSION "1.0.0"
 set -gx AVM_HOME (realpath .avm)
