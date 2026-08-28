@@ -8,7 +8,7 @@
 !/bin/cargo
 !/bin/rustc
 !/bin/install-surfpool.sh
-
+!/bin/check-sites.fish
 
 
 /.config/**

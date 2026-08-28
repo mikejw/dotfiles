@@ -76,10 +76,18 @@ function packer --wraps packer --description "Packer with absolute PACKER_TMP_DI
     env PACKER_TMP_DIR="$tmp" TMPDIR="$tmp" packer $argv
 end
 
-
 function homebrew
     if test -x /opt/homebrew/bin/brew
         eval "$(/opt/homebrew/bin/brew shellenv fish)"
+    end
+end
+
+function pnpm-env
+    if test -d "$HOME/Library/pnpm"
+        set -gx PNPM_HOME "$HOME/Library/pnpm"
+        if not string match -q -- "$PNPM_HOME/bin" $PATH
+            set -gx PATH "$PNPM_HOME/bin" $PATH
+        end
     end
 end
 
@@ -103,6 +111,8 @@ function start
     perl-env
     homebrew
     anchor-env
+
+    pnpm-env
 end
 
 if status is-interactive
