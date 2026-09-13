@@ -49,6 +49,8 @@ pkgs.mkShell {
     libusb1
     rustToolchain
 
+    awscli2
+
     (php.withExtensions ({ enabled, all }: enabled ++ [
       all.xdebug
       all.imagick
