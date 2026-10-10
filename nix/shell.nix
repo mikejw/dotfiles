@@ -10,6 +10,10 @@ let
 in
 
 pkgs.mkShell {
+  # Nix glibc does not include host locales. New tmux panes are login shells,
+  # and /etc/locale.conf sets LANG=en_GB.UTF-8.
+  LOCALE_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
+
   nativeBuildInputs = with pkgs; [
     perl
     perlPackages.locallib
@@ -68,10 +72,28 @@ pkgs.mkShell {
       REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || realpath . 2>/dev/null || pwd)"
       CONFIG_HOME="$REPO_ROOT/.config"
 
+      # The first window used to be the only fish. New panes otherwise start
+      # default-shell (bash) with XDG_CONFIG_HOME=$HOME/.config.
+      configure_tmux() {
+        tmux set-option -g default-shell "$FISH"
+        tmux set-option -g default-command "exec \"$FISH\""
+        tmux set-environment -g XDG_CONFIG_HOME "$CONFIG_HOME"
+        tmux set-environment -g LOCALE_ARCHIVE "$LOCALE_ARCHIVE"
+        tmux set-environment -g IN_NIX_SHELL "$IN_NIX_SHELL"
+        if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+          tmux set-environment -t "$SESSION_NAME" XDG_CONFIG_HOME "$CONFIG_HOME"
+          tmux set-environment -t "$SESSION_NAME" LOCALE_ARCHIVE "$LOCALE_ARCHIVE"
+          tmux set-environment -t "$SESSION_NAME" IN_NIX_SHELL "$IN_NIX_SHELL"
+        fi
+      }
+
       if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+        configure_tmux
         exec tmux attach-session -t "$SESSION_NAME"
       else
-        exec tmux new-session -s "$SESSION_NAME" "XDG_CONFIG_HOME=\"$CONFIG_HOME\" exec $FISH"
+        tmux start-server
+        configure_tmux
+        exec tmux new-session -s "$SESSION_NAME"
       fi
     fi
   '';
