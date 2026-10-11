@@ -72,28 +72,31 @@ pkgs.mkShell {
       REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || realpath . 2>/dev/null || pwd)"
       CONFIG_HOME="$REPO_ROOT/.config"
 
-      # The first window used to be the only fish. New panes otherwise start
-      # default-shell (bash) with XDG_CONFIG_HOME=$HOME/.config.
-      configure_tmux() {
+      # New panes must be fish with this repo's config. tmux drops a server
+      # that has no sessions (exit-empty), so start-server + set-option in a
+      # later command never reaches the session new-session actually creates.
+      # One client runs the options and creates the session before that exit.
+      export XDG_CONFIG_HOME="$CONFIG_HOME"
+      PANE_CMD="exec \"$FISH\""
+
+      if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
         tmux set-option -g default-shell "$FISH"
-        tmux set-option -g default-command "exec \"$FISH\""
+        tmux set-option -g default-command "$PANE_CMD"
         tmux set-environment -g XDG_CONFIG_HOME "$CONFIG_HOME"
         tmux set-environment -g LOCALE_ARCHIVE "$LOCALE_ARCHIVE"
         tmux set-environment -g IN_NIX_SHELL "$IN_NIX_SHELL"
-        if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
-          tmux set-environment -t "$SESSION_NAME" XDG_CONFIG_HOME "$CONFIG_HOME"
-          tmux set-environment -t "$SESSION_NAME" LOCALE_ARCHIVE "$LOCALE_ARCHIVE"
-          tmux set-environment -t "$SESSION_NAME" IN_NIX_SHELL "$IN_NIX_SHELL"
-        fi
-      }
-
-      if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
-        configure_tmux
+        tmux set-environment -t "$SESSION_NAME" XDG_CONFIG_HOME "$CONFIG_HOME"
+        tmux set-environment -t "$SESSION_NAME" LOCALE_ARCHIVE "$LOCALE_ARCHIVE"
+        tmux set-environment -t "$SESSION_NAME" IN_NIX_SHELL "$IN_NIX_SHELL"
         exec tmux attach-session -t "$SESSION_NAME"
       else
-        tmux start-server
-        configure_tmux
-        exec tmux new-session -s "$SESSION_NAME"
+        exec tmux \
+          set-option -g default-shell "$FISH" \; \
+          set-option -g default-command "$PANE_CMD" \; \
+          set-environment -g XDG_CONFIG_HOME "$CONFIG_HOME" \; \
+          set-environment -g LOCALE_ARCHIVE "$LOCALE_ARCHIVE" \; \
+          set-environment -g IN_NIX_SHELL "$IN_NIX_SHELL" \; \
+          new-session -s "$SESSION_NAME"
       fi
     fi
   '';
