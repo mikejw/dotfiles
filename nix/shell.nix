@@ -9,11 +9,7 @@ let
   rustToolchain = pkgs.rust-bin.stable."1.91.0".default;
 in
 
-pkgs.mkShell {
-  # Nix glibc does not include host locales. New tmux panes are login shells,
-  # and /etc/locale.conf sets LANG=en_GB.UTF-8.
-  LOCALE_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
-
+pkgs.mkShell ({
   nativeBuildInputs = with pkgs; [
     perl
     perlPackages.locallib
@@ -47,7 +43,8 @@ pkgs.mkShell {
     docker-compose
     go
     wget
-    packer
+
+    #packer
     imagemagick
 
     libusb1
@@ -83,21 +80,33 @@ pkgs.mkShell {
         tmux set-option -g default-shell "$FISH"
         tmux set-option -g default-command "$PANE_CMD"
         tmux set-environment -g XDG_CONFIG_HOME "$CONFIG_HOME"
-        tmux set-environment -g LOCALE_ARCHIVE "$LOCALE_ARCHIVE"
         tmux set-environment -g IN_NIX_SHELL "$IN_NIX_SHELL"
         tmux set-environment -t "$SESSION_NAME" XDG_CONFIG_HOME "$CONFIG_HOME"
-        tmux set-environment -t "$SESSION_NAME" LOCALE_ARCHIVE "$LOCALE_ARCHIVE"
         tmux set-environment -t "$SESSION_NAME" IN_NIX_SHELL "$IN_NIX_SHELL"
+        if [ -n "''${LOCALE_ARCHIVE:-}" ]; then
+          tmux set-environment -g LOCALE_ARCHIVE "$LOCALE_ARCHIVE"
+          tmux set-environment -t "$SESSION_NAME" LOCALE_ARCHIVE "$LOCALE_ARCHIVE"
+        fi
         exec tmux attach-session -t "$SESSION_NAME"
       else
+        # LOCALE_ARCHIVE exists only on glibc. Keep it in this same tmux
+        # invocation: a server with no sessions exits before a later command.
+        LOCALE_TMUX=()
+        if [ -n "''${LOCALE_ARCHIVE:-}" ]; then
+          LOCALE_TMUX=(set-environment -g LOCALE_ARCHIVE "$LOCALE_ARCHIVE" ";")
+        fi
         exec tmux \
-          set-option -g default-shell "$FISH" \; \
-          set-option -g default-command "$PANE_CMD" \; \
-          set-environment -g XDG_CONFIG_HOME "$CONFIG_HOME" \; \
-          set-environment -g LOCALE_ARCHIVE "$LOCALE_ARCHIVE" \; \
-          set-environment -g IN_NIX_SHELL "$IN_NIX_SHELL" \; \
+          set-option -g default-shell "$FISH" ";" \
+          set-option -g default-command "$PANE_CMD" ";" \
+          set-environment -g XDG_CONFIG_HOME "$CONFIG_HOME" ";" \
+          "''${LOCALE_TMUX[@]}" \
+          set-environment -g IN_NIX_SHELL "$IN_NIX_SHELL" ";" \
           new-session -s "$SESSION_NAME"
       fi
     fi
   '';
-}
+} // pkgs.lib.optionalAttrs (pkgs.glibcLocales != null) {
+  # Nix glibc does not include host locales. New tmux panes are login shells,
+  # and /etc/locale.conf sets LANG=en_GB.UTF-8. Darwin has no glibcLocales.
+  LOCALE_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
+})
