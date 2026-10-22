@@ -60,6 +60,8 @@ pkgs.mkShell ({
   ];
 
   shellHook = ''
+    export NIX_ENFORCE_PURITY=0 # For compiling Perl modules
+    
     if [ -z "$TMUX" ]; then
       SESSION_NAME=default
       FISH=$(command -v fish)

@@ -42,16 +42,23 @@ function ansible-env --description 'Set environment variables for Ansible/locale
     set -gx LC_ALL C.UTF-8
 end
 
-function perl-env --description 'Set up local::lib for Perl'
-    set -gx PERL_LOCAL_LIB_ROOT (pwd)/.perl5
-    set -gx PERL_MB_OPT "--install_base $PERL_LOCAL_LIB_ROOT"
-    set -gx PERL_MM_OPT "INSTALL_BASE=$PERL_LOCAL_LIB_ROOT"
-    set -gx PERL5LIB "$PERL_LOCAL_LIB_ROOT/lib/perl5:$PERL5LIB"
-    set -gx PATH "$PERL_LOCAL_LIB_ROOT/bin:$PATH"
+function perl-env --description 'Set up project-local Perl modules'
+    set -l root "$HOME/code/dotfiles/.perl5"
 
-    if test -d "$PERL_LOCAL_LIB_ROOT/lib/perl5"
-        eval (perl -I"$PERL_LOCAL_LIB_ROOT/lib/perl5" -Mlocal::lib="$PERL_LOCAL_LIB_ROOT")
-    end
+    # Remove inherited Perl library configuration
+    set -e PERL5LIB
+    set -e PERLLIB
+    set -e PERL_LOCAL_LIB_ROOT
+    set -e PERL_MB_OPT
+    set -e PERL_MM_OPT
+
+    # Configure local::lib
+    set -gx PERL_LOCAL_LIB_ROOT $root
+    set -gx PERL_MB_OPT "--install_base $root"
+    set -gx PERL_MM_OPT "INSTALL_BASE=$root"
+    set -gx PERL5LIB "$root/lib/perl5"
+
+    fish_add_path -p "$root/bin"
 end
 
 function anchor-env
